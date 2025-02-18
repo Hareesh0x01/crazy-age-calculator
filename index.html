@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crazy Age Calculator</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            animation: bgAnimation 5s infinite alternate;
+        }
+        @keyframes bgAnimation {
+            0% { background: linear-gradient(45deg, #ff00ff, #00ffff); }
+            100% { background: linear-gradient(45deg, #00ff00, #ff0000); }
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transform: rotate(-2deg);
+            transition: transform 0.3s;
+        }
+        .container:hover {
+            transform: rotate(2deg) scale(1.05);
+        }
+        input, button {
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 18px;
+            border-radius: 10px;
+        }
+        input[type="text"] {
+            text-align: center;
+            font-weight: bold;
+            color: #ff0099;
+            border: 2px solid #ff0099;
+            background-color: #fff0f5;
+            width: 200px;
+        }
+        button {
+            cursor: pointer;
+            background: #ff0099;
+            color: white;
+            border: none;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        button:hover {
+            background: #cc0077;
+        }
+        #result {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff0000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease-in-out;
+        }
+        #result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #detailedResult {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Crazy Age Calculator 🤯</h2>
+        <label for="dob">Enter Your Date of Birth (DD-MM-YYYY):</label>
+        <input type="text" id="dob" placeholder="DD-MM-YYYY">
+        <button onclick="calculateAge()">Calculate Age 🚀</button>
+        <h3 id="result"></h3>
+        <div id="detailedResult"></div>
+    </div>
+
+    <script>
+        function calculateAge() {
+            let dob = document.getElementById("dob").value;
+            let result = document.getElementById("result");
+            let detailedResult = document.getElementById("detailedResult");
+            
+            // Validate the date format (DD-MM-YYYY)
+            if (!dob.match(/^\d{2}-\d{2}-\d{4}$/)) {
+                result.innerText = "Bruh, enter your DOB in DD-MM-YYYY format!";
+                result.classList.add("show");
+                result.style.color = "#ff4500"; // Error message color
+                return;
+            }
+
+            // Split and parse the date (DD-MM-YYYY)
+            let parts = dob.split("-");
+            let day = parseInt(parts[0]);
+            let month = parseInt(parts[1]) - 1; // Month is 0-indexed in JavaScript
+            let year = parseInt(parts[2]);
+
+            // Ensure the date is valid
+            let dobDate = new Date(year, month, day);
+            let today = new Date();
+
+            if (dobDate > today) {
+                result.innerText = "Wait! You can't be born in the future! 😜";
+                result.classList.add("show");
+                result.style.color = "#ff4500"; // Error message color
+                return;
+            }
+
+            // Calculate age
+            let age = today.getFullYear() - dobDate.getFullYear();
+            let monthDiff = today.getMonth() - dobDate.getMonth();
+            let dayDiff = today.getDate() - dobDate.getDate();
+            
+            // Adjust age if current date is before birthday in this year
+            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                age--;
+            }
+
+            result.innerText = `OMG! You're ${age} years old! 🎉`;
+            result.classList.add("show");
+            
+            // Calculate detailed results
+            let months = age * 12 + (monthDiff < 0 ? monthDiff + 12 : monthDiff);
+            let days = Math.floor((today - dobDate) / (1000 * 60 * 60 * 24));
+            let hours = days * 24;
+            let minutes = hours * 60;
+            let seconds = minutes * 60;
+            
+            // Display detailed results
+            detailedResult.innerHTML = `
+                <p><strong>${age}</strong> Years</p>
+                <p><strong>${months}</strong> Months</p>
+                <p><strong>${Math.floor(days / 7)}</strong> Weeks</p>
+                <p><strong>${days}</strong> Days</p>
+                <p><strong>${hours}</strong> Hours</p>
+                <p><strong>${minutes}</strong> Minutes</p>
+                <p><strong>${seconds}</strong> Seconds</p>
+            `;
+        }
+    </script>
+</body>
+</html>
